@@ -1,0 +1,1257 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="color-scheme" content="dark light" />
+  <title>World Ledger — Year Zero SMP</title>
+  <meta name="description" content="World map, plot registry, and ownership status for a persistent SMP." />
+
+  <style>
+    :root{
+      --bg0:#07090f;
+      --bg1:#0b1020;
+      --card:#0f1730cc;
+      --card2:#0d142acc;
+      --text:#e9eefc;
+      --muted:#a9b4d6;
+      --muted2:#7f8ab2;
+      --line:#1c2a55;
+      --shadow: 0 16px 60px rgba(0,0,0,.55);
+      --shadow2: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 18px;
+      --radius2: 14px;
+      --max: 1120px;
+
+      --accent:#86b7ff;
+      --accent2:#b58cff;
+      --good:#3be8b0;
+      --warn:#ffd37d;
+      --bad:#ff6b8a;
+
+      --navH: 72px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      background: radial-gradient(1200px 700px at 20% 10%, rgba(134,183,255,.18), transparent 60%),
+                  radial-gradient(900px 600px at 80% 20%, rgba(181,140,255,.14), transparent 55%),
+                  radial-gradient(800px 600px at 50% 90%, rgba(59,232,176,.10), transparent 60%),
+                  linear-gradient(180deg, var(--bg0), var(--bg1));
+      color:var(--text);
+      overflow-x:hidden;
+    }
+    a{color:inherit; text-decoration:none}
+    button,input,select{font:inherit}
+    input,select{
+      background: rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.10);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 14px;
+      outline:none;
+      transition: border-color .18s ease, background .18s ease;
+    }
+    input:focus,select:focus{
+      border-color: rgba(134,183,255,.35);
+      background: rgba(255,255,255,.04);
+    }
+
+    /* noise overlay */
+    .noise{
+      pointer-events:none;
+      position:fixed; inset:0;
+      opacity:.06;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      mix-blend-mode:overlay;
+      animation: noiseMove 8s linear infinite;
+    }
+    @keyframes noiseMove{
+      0%{transform:translate3d(0,0,0)}
+      100%{transform:translate3d(-6%,4%,0)}
+    }
+
+    .container{
+      width:min(var(--max), calc(100% - 48px));
+      margin:0 auto;
+    }
+
+    /* Nav */
+    .nav-wrap{
+      position:sticky; top:0; z-index:50;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      background: rgba(7,9,15,.55);
+      border-bottom:1px solid rgba(28,42,85,.55);
+    }
+    .nav{
+      height:var(--navH);
+      display:flex; align-items:center; justify-content:space-between;
+      gap:16px;
+    }
+
+    .brand{
+      display:flex; align-items:center; gap:12px;
+      min-width: 210px;
+    }
+    .brand-badge{
+      width:36px; height:36px;
+      border-radius:12px;
+      background:
+        radial-gradient(14px 14px at 30% 35%, rgba(255,255,255,.28), transparent 60%),
+        linear-gradient(135deg, rgba(134,183,255,.9), rgba(181,140,255,.82));
+      box-shadow: 0 10px 30px rgba(134,183,255,.18);
+      border:1px solid rgba(255,255,255,.18);
+    }
+    .brand-text{display:flex; flex-direction:column; line-height:1.05}
+    .brand-title{font-weight:700; letter-spacing:.2px}
+    .brand-sub{font-size:12px; color:var(--muted2); margin-top:2px}
+
+    .nav-links{
+      display:flex; align-items:center; gap:8px;
+      flex-wrap:wrap;
+      justify-content:center;
+    }
+    .nav-links a{
+      padding:10px 12px;
+      border-radius:12px;
+      color:var(--muted);
+      border:1px solid transparent;
+      transition: all .18s ease;
+      font-size:14px;
+    }
+    .nav-links a:hover{
+      color:var(--text);
+      background: rgba(255,255,255,.04);
+      border-color: rgba(255,255,255,.08);
+    }
+    .nav-links a.active{
+      color:var(--text);
+      background: rgba(134,183,255,.10);
+      border-color: rgba(134,183,255,.22);
+    }
+
+    .nav-cta{
+      display:flex; align-items:center; gap:10px;
+      min-width: 210px;
+      justify-content:flex-end;
+    }
+
+    .btn{
+      display:inline-flex; align-items:center; gap:10px;
+      padding:11px 14px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      color:var(--text);
+      cursor:pointer;
+      transition: transform .12s ease, background .18s ease, border-color .18s ease, box-shadow .18s ease;
+      box-shadow: 0 8px 24px rgba(0,0,0,.20);
+      user-select:none;
+      white-space:nowrap;
+    }
+    .btn:hover{
+      background: rgba(255,255,255,.06);
+      border-color: rgba(255,255,255,.18);
+      transform: translateY(-1px);
+      box-shadow: 0 12px 30px rgba(0,0,0,.26);
+    }
+    .btn:active{transform: translateY(0px) scale(.99)}
+    .btn.primary{
+      border-color: rgba(134,183,255,.26);
+      background: linear-gradient(135deg, rgba(134,183,255,.20), rgba(181,140,255,.16));
+    }
+    .btn.primary:hover{
+      border-color: rgba(134,183,255,.40);
+      background: linear-gradient(135deg, rgba(134,183,255,.26), rgba(181,140,255,.22));
+    }
+    .btn .icon{width:16px;height:16px; opacity:.9}
+
+    /* Mobile */
+    .hamburger{
+      display:none;
+      width:42px; height:42px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      cursor:pointer;
+      align-items:center; justify-content:center;
+      transition: all .18s ease;
+    }
+    .hamburger:hover{
+      background: rgba(255,255,255,.06);
+      border-color: rgba(255,255,255,.18);
+    }
+    .hamburger svg{width:20px;height:20px; opacity:.9}
+    .mobile-drawer{
+      display:none;
+      border-top:1px solid rgba(28,42,85,.55);
+      background: rgba(7,9,15,.72);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+    .mobile-drawer .inner{
+      padding:14px 0 18px;
+      display:flex; flex-direction:column; gap:8px;
+    }
+    .mobile-drawer a{
+      padding:12px 14px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.03);
+      color: var(--text);
+      display:flex; justify-content:space-between; align-items:center;
+    }
+    .mobile-drawer a span{color:var(--muted); font-size:13px}
+
+    /* Header */
+    header{
+      padding: 38px 0 16px;
+    }
+    .header-card{
+      background: linear-gradient(180deg, rgba(15,23,48,.66), rgba(13,20,42,.52));
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      padding: 22px;
+      overflow:hidden;
+      position:relative;
+    }
+    .header-card::before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: radial-gradient(640px 260px at 25% 10%, rgba(134,183,255,.18), transparent 55%),
+                  radial-gradient(520px 260px at 75% 20%, rgba(181,140,255,.14), transparent 55%);
+      opacity:.9;
+      z-index:0;
+    }
+    .header-card > *{position:relative; z-index:1}
+
+    .kicker{
+      display:inline-flex; align-items:center; gap:10px;
+      font-size:12px;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color: var(--muted);
+      background: rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.10);
+      padding:8px 10px;
+      border-radius: 999px;
+    }
+    .kicker .pill{
+      width:8px;height:8px;border-radius:999px;
+      background: var(--accent);
+      box-shadow: 0 0 0 4px rgba(134,183,255,.12);
+    }
+    h1{
+      margin:14px 0 8px;
+      font-size: clamp(28px, 3.2vw, 42px);
+      line-height:1.08;
+      letter-spacing:-.02em;
+    }
+    .lead{
+      margin: 8px 0 16px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height:1.6;
+      max-width: 78ch;
+    }
+    .head-actions{
+      display:flex; gap:10px; flex-wrap:wrap;
+      align-items:center;
+    }
+
+    /* Layout grid */
+    main{padding: 14px 0 58px}
+    .grid{
+      display:grid;
+      grid-template-columns: 1.12fr .88fr;
+      gap: 16px;
+      align-items:start;
+    }
+
+    /* Cards */
+    .card{
+      background: linear-gradient(180deg, rgba(15,23,48,.42), rgba(13,20,42,.30));
+      border:1px solid rgba(255,255,255,.08);
+      border-radius: 22px;
+      box-shadow: var(--shadow2);
+      padding: 18px;
+      overflow:hidden;
+      position:relative;
+    }
+    .card h2{
+      margin:0 0 8px;
+      font-size: 16px;
+      letter-spacing:-.01em;
+    }
+    .sub{
+      color: var(--muted);
+      font-size: 13px;
+      line-height:1.6;
+      margin: 0 0 12px;
+    }
+    .divider{
+      height:1px;
+      background: linear-gradient(90deg, transparent, rgba(28,42,85,.8), transparent);
+      margin: 12px 0;
+    }
+
+    /* Map embed */
+    .mapWrap{
+      border-radius: 18px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.22);
+      min-height: 420px;
+      position:relative;
+    }
+    .mapWrap iframe{
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      border:0;
+    }
+    .mapOverlay{
+      position:absolute;
+      left:14px; right:14px; top:14px;
+      display:flex; justify-content:space-between; gap:10px;
+      pointer-events:none;
+    }
+    .chip{
+      pointer-events:auto;
+      display:inline-flex; align-items:center; gap:8px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(7,9,15,.55);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      color: var(--text);
+      box-shadow: 0 10px 24px rgba(0,0,0,.25);
+      font-size: 13px;
+      white-space:nowrap;
+    }
+    .dot{width:9px;height:9px;border-radius:999px; box-shadow: 0 0 0 4px rgba(255,255,255,.08)}
+    .dot.good{background: var(--good); box-shadow: 0 0 0 4px rgba(59,232,176,.12)}
+    .dot.warn{background: var(--warn); box-shadow: 0 0 0 4px rgba(255,211,125,.14)}
+    .dot.bad{background: var(--bad); box-shadow: 0 0 0 4px rgba(255,107,138,.14)}
+
+    /* Controls */
+    .controls{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .controls .grow{flex: 1 1 240px}
+    .controls .small{flex: 0 0 auto}
+    .hint{
+      color: var(--muted2);
+      font-size: 12px;
+      line-height:1.5;
+      margin-top: 8px;
+    }
+
+    /* Registry list */
+    .listTop{
+      display:flex; justify-content:space-between; align-items:center;
+      gap:10px; flex-wrap:wrap;
+    }
+    .count{
+      font-size: 12px;
+      color: var(--muted2);
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      padding: 7px 10px;
+      border-radius: 999px;
+    }
+    .list{
+      display:flex;
+      flex-direction:column;
+      gap: 10px;
+      margin-top: 10px;
+      max-height: 520px;
+      overflow:auto;
+      padding-right: 6px;
+    }
+    .list::-webkit-scrollbar{width:10px}
+    .list::-webkit-scrollbar-thumb{
+      background: rgba(255,255,255,.10);
+      border-radius: 999px;
+      border:3px solid rgba(0,0,0,0);
+      background-clip: padding-box;
+    }
+
+    .row{
+      display:flex;
+      gap: 10px;
+      align-items:stretch;
+      padding: 12px;
+      border-radius: 18px;
+      border:1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.03);
+      transition: transform .12s ease, border-color .18s ease, background .18s ease;
+    }
+    .row:hover{
+      transform: translateY(-1px);
+      border-color: rgba(255,255,255,.14);
+      background: rgba(255,255,255,.04);
+    }
+    .left{
+      display:flex; flex-direction:column; gap:6px;
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+    .right{
+      display:flex; flex-direction:column; justify-content:space-between; align-items:flex-end;
+      gap: 8px;
+      flex: 0 0 auto;
+    }
+    .titleLine{
+      display:flex; align-items:center; gap:10px;
+      flex-wrap:wrap;
+    }
+    .plotName{
+      font-weight:700;
+      letter-spacing:.2px;
+      font-size: 14px;
+    }
+    .meta{
+      display:flex; flex-wrap:wrap; gap:8px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .tag{
+      padding: 6px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.16);
+      color: var(--muted);
+      font-size: 12px;
+      white-space:nowrap;
+    }
+    .tag.owned{border-color: rgba(255,107,138,.25); background: rgba(255,107,138,.06); color: #ffd0db}
+    .tag.available{border-color: rgba(59,232,176,.22); background: rgba(59,232,176,.06); color: #c8ffee}
+    .tag.hold{border-color: rgba(255,211,125,.24); background: rgba(255,211,125,.06); color: #ffe8bf}
+
+    .price{
+      font-weight:800;
+      font-size: 14px;
+      letter-spacing:.2px;
+    }
+    .smallNote{
+      color: var(--muted2);
+      font-size: 12px;
+    }
+
+    /* Sidebar */
+    .sideBox{
+      display:flex; flex-direction:column; gap: 16px;
+      position:sticky;
+      top: calc(var(--navH) + 16px);
+    }
+    .kv{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+    .kv .item{
+      border:1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.03);
+      border-radius: 18px;
+      padding: 12px;
+      min-height: 72px;
+    }
+    .kv .k{font-size:12px; color: var(--muted2)}
+    .kv .v{margin-top:6px; font-size:14px; font-weight:700}
+    .kv .s{margin-top:4px; font-size:12px; color: var(--muted)}
+    .callout{
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+      padding: 14px;
+      border-radius: 18px;
+      border:1px solid rgba(255,255,255,.10);
+      background: linear-gradient(135deg, rgba(134,183,255,.10), rgba(181,140,255,.08));
+    }
+    .callout .mark{
+      width:34px;height:34px;border-radius: 14px;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      display:grid; place-items:center;
+      flex: 0 0 auto;
+    }
+    .callout .mark svg{width:18px;height:18px; opacity:.95}
+    .callout .text{
+      color: var(--muted);
+      font-size: 13px;
+      line-height:1.6;
+      margin-top: -2px;
+    }
+    .callout .text strong{color: var(--text)}
+
+    .steps{
+      display:flex; flex-direction:column; gap: 10px;
+      margin-top: 10px;
+    }
+    .step{
+      display:flex; gap:12px;
+      border:1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.03);
+      border-radius: 18px;
+      padding: 12px;
+    }
+    .num{
+      width:28px;height:28px;border-radius: 12px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.16);
+      display:grid; place-items:center;
+      font-weight:800;
+      color: var(--text);
+      flex: 0 0 auto;
+    }
+    .step p{
+      margin:0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height:1.55;
+    }
+
+    /* Modal */
+    .modalBack{
+      position:fixed; inset:0;
+      background: rgba(0,0,0,.52);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding: 20px;
+      z-index: 80;
+    }
+    .modalBack.show{display:flex}
+    .modal{
+      width: min(720px, 100%);
+      border-radius: 22px;
+      border:1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(15,23,48,.92), rgba(13,20,42,.88));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .modalHead{
+      display:flex; justify-content:space-between; align-items:center;
+      padding: 14px 16px;
+      border-bottom:1px solid rgba(255,255,255,.10);
+      background: rgba(7,9,15,.35);
+    }
+    .modalHead .t{
+      font-weight:800;
+      letter-spacing:.2px;
+    }
+    .x{
+      width:40px;height:40px;border-radius: 14px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      cursor:pointer;
+      display:grid; place-items:center;
+      transition: all .18s ease;
+    }
+    .x:hover{background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.18)}
+    .x svg{width:18px;height:18px}
+    .modalBody{padding: 16px}
+    .modalGrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .box{
+      border:1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.03);
+      border-radius: 18px;
+      padding: 12px;
+    }
+    .box .k{font-size:12px; color: var(--muted2)}
+    .box .v{margin-top:6px; font-size:14px; font-weight:800}
+    .box .s{margin-top:4px; font-size:12px; color: var(--muted)}
+    .modalActions{
+      display:flex; gap:10px; flex-wrap:wrap;
+      padding: 0 16px 16px;
+    }
+
+    /* Toast */
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 22px;
+      transform: translateX(-50%);
+      background: rgba(12,18,36,.82);
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow: var(--shadow2);
+      padding: 12px 14px;
+      border-radius: 16px;
+      color: var(--text);
+      font-size: 13px;
+      display:flex; align-items:center; gap:10px;
+      opacity:0;
+      pointer-events:none;
+      transition: opacity .18s ease, transform .18s ease;
+      z-index:90;
+    }
+    .toast.show{
+      opacity:1;
+      transform: translateX(-50%) translateY(-2px);
+    }
+    .toast .chip{
+      width:10px;height:10px;border-radius:999px;
+      background: var(--accent);
+      box-shadow: 0 0 0 4px rgba(134,183,255,.12);
+    }
+
+    /* Reveal */
+    .reveal{opacity:0; transform: translateY(10px); transition: opacity .5s ease, transform .5s ease}
+    .reveal.on{opacity:1; transform: translateY(0)}
+
+    /* Responsive */
+    @media (max-width: 980px){
+      .grid{grid-template-columns: 1fr}
+      .sideBox{position:static}
+      .brand{min-width:auto}
+      .nav-cta{min-width:auto}
+      .modalGrid{grid-template-columns: 1fr}
+    }
+    @media (max-width: 820px){
+      .nav-links{display:none}
+      .hamburger{display:flex}
+      .mobile-drawer{display:block; max-height:0; overflow:hidden; transition:max-height .22s ease}
+      .mobile-drawer.open{max-height: 520px}
+    }
+    @media (prefers-reduced-motion: reduce){
+      .noise{animation:none}
+      .reveal{transition:none}
+      .mobile-drawer{transition:none}
+      .btn{transition:none}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="noise" aria-hidden="true"></div>
+
+  <!-- NAV -->
+  <div class="nav-wrap">
+    <div class="container">
+      <nav class="nav" aria-label="Primary">
+        <a class="brand" href="index.html" title="Home">
+          <div class="brand-badge" aria-hidden="true"></div>
+          <div class="brand-text">
+            <div class="brand-title">Year Zero SMP</div>
+            <div class="brand-sub">World Ledger</div>
+          </div>
+        </a>
+
+        <div class="nav-links" aria-label="Site">
+          <a href="../">Home</a>
+          <a href="../#ledger" class="active">World Ledger</a>
+          <a href="../#join">Join</a>
+          <a href="../#rules">Rules & Mods</a>
+          <a href="../#commands">Commands</a>
+          <a href="../#wiki">Wiki</a>
+          <a href="../#about">About</a>
+          <a href="../#terms">Terms</a>
+        </div>
+
+        <div class="nav-cta">
+          <button class="btn primary" id="btnBuyAny" type="button" title="View available plots">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M12 5v14M5 12h14"/>
+            </svg>
+            View Available
+          </button>
+
+          <button class="hamburger" id="hamburger" type="button" aria-label="Open menu" aria-expanded="false">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+          </button>
+        </div>
+      </nav>
+
+      <div class="mobile-drawer" id="mobileDrawer" aria-label="Mobile menu">
+        <div class="container">
+          <div class="inner">
+            <a href="index.html">Home <span>Overview</span></a>
+            <a href="ledger.html">World Ledger <span>Map + Plots</span></a>
+            <a href="join.html">Join <span>IP + Version</span></a>
+            <a href="rules.html">Rules & Mods <span>Allowed clients</span></a>
+            <a href="commands.html">Commands <span>Quality-of-life</span></a>
+            <a href="wiki.html">Wiki <span>Systems docs</span></a>
+            <a href="about.html">About <span>Vision</span></a>
+            <a href="terms.html">Terms <span>Store policies</span></a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PAGE HEADER -->
+  <header>
+    <div class="container">
+      <div class="header-card reveal">
+        <div class="kicker"><span class="pill" aria-hidden="true"></span> Map • Plot Registry • Ownership Status</div>
+        <h1>World Ledger</h1>
+        <p class="lead">
+          The public record of land, ownership, and availability. Protected plots provide grief protection only — not gameplay power.
+          Use the map for location and context, then use the registry to view parcels.
+        </p>
+
+        <div class="head-actions">
+          <button class="btn primary" id="btnOpenMap" type="button">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M12 2 2 7l10 5 10-5-10-5Z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+            </svg>
+            Open Map
+          </button>
+
+          <button class="btn" id="btnCopyMap" type="button">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M9 9h10v10H9z"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+            Copy Map Link
+          </button>
+
+          <button class="btn" id="btnCopyIp" type="button">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M9 9h10v10H9z"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+            Copy Server IP
+          </button>
+        </div>
+
+        <p class="hint" style="margin:10px 0 0;">
+          <strong>Year Zero note:</strong> ownership clusters and cities aren’t fully formed yet. Early positions shape where the world stabilizes.
+        </p>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <div class="grid">
+
+        <!-- LEFT: MAP + REGISTRY -->
+        <div style="display:flex; flex-direction:column; gap:16px;">
+
+          <!-- Map -->
+          <section class="card reveal" aria-label="World map">
+            <h2>Map</h2>
+            <p class="sub">Embed your Dynmap (or external map). Plots should be visible as fixed parcels with ownership overlays.</p>
+
+            <div class="mapWrap" id="mapWrap">
+              <!-- Replace src with your dynmap URL -->
+              <iframe id="mapFrame" src="http://mc.swanky.wtf:8634/" title="World map"></iframe>
+
+              <div class="mapOverlay" aria-hidden="true">
+                <div class="chip"><span class="dot good"></span> Available</div>
+                <div class="chip"><span class="dot bad"></span> Owned</div>
+                <div class="chip"><span class="dot warn"></span> Hold</div>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="controls" aria-label="Ledger filters">
+              <input class="grow" id="q" type="search" placeholder="Search plots (name, region, owner, tags)..." autocomplete="off" />
+              <select class="small" id="status">
+                <option value="all">All status</option>
+                <option value="available">Available</option>
+                <option value="owned">Owned</option>
+                <option value="hold">Hold</option>
+              </select>
+              <select class="small" id="sort">
+                <option value="recommended">Sort: Recommended</option>
+                <option value="price_asc">Price: Low → High</option>
+                <option value="price_desc">Price: High → Low</option>
+                <option value="name_asc">Name: A → Z</option>
+                <option value="newest">Newest listed</option>
+              </select>
+              <button class="btn" id="btnReset" type="button" title="Reset filters">
+                Reset
+              </button>
+            </div>
+
+            <div class="hint">
+              Tip: Keep pricing simple. Scarcity and location do the work. Avoid “sales” language — this is a registry.
+            </div>
+          </section>
+
+          <!-- Registry -->
+          <section class="card reveal" aria-label="Plot registry">
+            <div class="listTop">
+              <div>
+                <h2>Plot Registry</h2>
+                <p class="sub" style="margin-bottom:0;">Fixed parcels only — no claim spam. Ownership is public and persistent.</p>
+              </div>
+              <div class="count" id="count">0 plots</div>
+            </div>
+
+            <div class="list" id="list" role="list"></div>
+
+            <div class="divider"></div>
+            <div class="hint">
+              Purchases should assign ownership automatically via webhook → server command (we’ll wire that later).
+            </div>
+          </section>
+
+        </div>
+
+        <!-- RIGHT: SUMMARY + HOW TO -->
+        <aside class="sideBox">
+
+          <section class="card reveal" aria-label="Ledger summary">
+            <h2>Ledger Summary</h2>
+            <p class="sub">High-level status. Keep it factual.</p>
+
+            <div class="kv">
+              <div class="item">
+                <div class="k">World</div>
+                <div class="v" id="worldName">Main Survival</div>
+                <div class="s">Single persistent map</div>
+              </div>
+              <div class="item">
+                <div class="k">Wipes</div>
+                <div class="v">None</div>
+                <div class="s">No scheduled resets</div>
+              </div>
+              <div class="item">
+                <div class="k">Available</div>
+                <div class="v" id="kAvail">—</div>
+                <div class="s">Ready to purchase</div>
+              </div>
+              <div class="item">
+                <div class="k">Owned</div>
+                <div class="v" id="kOwned">—</div>
+                <div class="s">Protected land</div>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="callout">
+              <div class="mark" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                  <path d="M12 22s8-4 8-10V6l-8-4-8 4v6c0 6 8 10 8 10Z"/>
+                </svg>
+              </div>
+              <div class="text">
+                <strong>Plots provide grief protection only.</strong><br/>
+                No combat buffs. No resource multipliers. Protection is the premium.
+              </div>
+            </div>
+          </section>
+
+          <section class="card reveal" aria-label="How buying works">
+            <h2>How it works</h2>
+            <p class="sub">Keep this short and serious.</p>
+
+            <div class="steps" role="list">
+              <div class="step" role="listitem">
+                <div class="num">1</div>
+                <p>Find a parcel on the map or in the registry.</p>
+              </div>
+              <div class="step" role="listitem">
+                <div class="num">2</div>
+                <p>Purchase assigns ownership automatically.</p>
+              </div>
+              <div class="step" role="listitem">
+                <div class="num">3</div>
+                <p>Owner receives protection + invite controls in-game.</p>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <button class="btn primary" id="btnAvailable" type="button" style="width:100%; justify-content:center;">
+              Show Available Only
+            </button>
+            <div class="hint" style="margin-top:10px;">
+              Refunds/chargebacks will be handled under Terms. Keep policy strict.
+            </div>
+          </section>
+
+          <section class="card reveal" aria-label="Support">
+            <h2>Support</h2>
+            <p class="sub">Keep it clean: where to ask, what not to ask.</p>
+            <div class="callout">
+              <div class="mark" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                  <path d="M12 18h.01"/><path d="M9.09 9a3 3 0 1 1 5.82 1c0 2-3 2-3 4"/><path d="M22 12A10 10 0 1 1 12 2a10 10 0 0 1 10 10Z"/>
+                </svg>
+              </div>
+              <div class="text">
+                For technical issues: Discord.<br/>
+                For “I got raided”: that’s gameplay.
+              </div>
+            </div>
+          </section>
+
+        </aside>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- Plot modal -->
+  <div class="modalBack" id="modalBack" role="dialog" aria-modal="true" aria-label="Plot details">
+    <div class="modal">
+      <div class="modalHead">
+        <div class="t" id="mTitle">Plot</div>
+        <button class="x" id="mClose" type="button" aria-label="Close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M18 6 6 18M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modalBody">
+        <div class="modalGrid">
+          <div class="box">
+            <div class="k">Status</div>
+            <div class="v" id="mStatus">—</div>
+            <div class="s" id="mStatusNote">—</div>
+          </div>
+          <div class="box">
+            <div class="k">Price</div>
+            <div class="v" id="mPrice">—</div>
+            <div class="s">Protection only</div>
+          </div>
+          <div class="box">
+            <div class="k">Region</div>
+            <div class="v" id="mRegion">—</div>
+            <div class="s">Fixed parcel</div>
+          </div>
+          <div class="box">
+            <div class="k">Owner</div>
+            <div class="v" id="mOwner">—</div>
+            <div class="s" id="mOwnerNote">—</div>
+          </div>
+          <div class="box">
+            <div class="k">Coordinates</div>
+            <div class="v" id="mCoords">—</div>
+            <div class="s">Center point</div>
+          </div>
+          <div class="box">
+            <div class="k">Notes</div>
+            <div class="v" id="mNotes">—</div>
+            <div class="s">Location signal</div>
+          </div>
+        </div>
+      </div>
+      <div class="modalActions">
+        <button class="btn" id="mCopyCoords" type="button">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M9 9h10v10H9z"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+          </svg>
+          Copy /tp
+        </button>
+        <button class="btn" id="mOpenMap" type="button">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M12 2 2 7l10 5 10-5-10-5Z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+          </svg>
+          View on Map
+        </button>
+        <button class="btn primary" id="mBuy" type="button">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M6 6h15l-1.5 9h-12L6 6Z"/><path d="M6 6l-2-3H1"/><path d="M8 21a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"/><path d="M18 21a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"/>
+          </svg>
+          Purchase
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <span class="chip" aria-hidden="true"></span>
+    <span id="toastText">Copied.</span>
+  </div>
+
+  <script>
+    // ====== CONFIG (edit these) ======
+    const CONFIG = {
+      serverIp: "play.example.com",
+      mapUrl: "https://example.com/dynmap/",     // dynmap base URL
+      mapEmbedUrl: "https://example.com/dynmap/",// dynmap embed URL (same is fine)
+      purchaseUrl: "https://example.com/store",  // where checkout happens (later per-plot)
+      discordUrl: "https://discord.gg/yourcode"
+    };
+
+    // Demo data (replace with API later)
+    const PLOTS = [
+      { id:"A-01", name:"Brickline Row", status:"available", price:25, region:"South Canal", owner:null, x:120, z:-340, tags:["river","central"], notes:"Close to travel routes." },
+      { id:"A-02", name:"Overpass Lot", status:"owned", price:30, region:"South Canal", owner:"Quill", x:180, z:-310, tags:["central"], notes:"High traffic corridor." },
+      { id:"B-07", name:"Glasspoint", status:"available", price:40, region:"East Ridge", owner:null, x:640, z:220, tags:["elevation","views"], notes:"Elevation advantage. Long sight lines." },
+      { id:"C-12", name:"Dockside Parcel", status:"hold", price:35, region:"West Inlet", owner:"(hold)", x:-410, z:90, tags:["water"], notes:"Hold: pending payment verification." },
+      { id:"D-03", name:"Redstone Alley", status:"owned", price:20, region:"Old Market", owner:"MaxD", x:40, z:80, tags:["market"], notes:"Near early hub." },
+      { id:"E-09", name:"North Spur", status:"available", price:18, region:"North Spur", owner:null, x:-820, z:-610, tags:["remote"], notes:"Quiet. Far from clusters." },
+      { id:"F-02", name:"Midline Corner", status:"owned", price:28, region:"Midline", owner:"Adrian", x:12, z:-22, tags:["central","flat"], notes:"Easy builds. Strong access." },
+      { id:"G-11", name:"Hollowside", status:"available", price:22, region:"Hollow", owner:null, x:310, z:710, tags:["cave"], notes:"Terrain-heavy. Defensive." },
+    ];
+
+    // ====== Helpers ======
+    const $ = (sel, el=document) => el.querySelector(sel);
+    const $$ = (sel, el=document) => Array.from(el.querySelectorAll(sel));
+
+    function showToast(msg){
+      const t = $("#toast");
+      $("#toastText").textContent = msg;
+      t.classList.add("show");
+      clearTimeout(showToast._timer);
+      showToast._timer = setTimeout(() => t.classList.remove("show"), 1800);
+    }
+
+    async function copyText(text){
+      try{
+        await navigator.clipboard.writeText(text);
+        showToast("Copied: " + text);
+      }catch(e){
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.left = "-9999px";
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        ta.remove();
+        showToast("Copied: " + text);
+      }
+    }
+
+    function money(n){ return "$" + Number(n).toFixed(0); }
+
+    function statusTag(status){
+      if(status==="available") return `<span class="tag available">Available</span>`;
+      if(status==="owned") return `<span class="tag owned">Owned</span>`;
+      return `<span class="tag hold">Hold</span>`;
+    }
+
+    function statusLabel(status){
+      if(status==="available") return ["Available", "Ready for purchase"];
+      if(status==="owned") return ["Owned", "Protected by owner + invites"];
+      return ["Hold", "Pending verification"];
+    }
+
+    function openModal(plot){
+      $("#mTitle").textContent = `${plot.name} • ${plot.id}`;
+      const [lab, note] = statusLabel(plot.status);
+      $("#mStatus").textContent = lab;
+      $("#mStatusNote").textContent = note;
+      $("#mPrice").textContent = money(plot.price);
+      $("#mRegion").textContent = plot.region;
+      $("#mOwner").textContent = plot.owner ? plot.owner : "—";
+      $("#mOwnerNote").textContent = plot.owner ? "Public ownership record" : "Unowned";
+      $("#mCoords").textContent = `x ${plot.x}, z ${plot.z}`;
+      $("#mNotes").textContent = plot.notes || "—";
+
+      // buttons
+      $("#mCopyCoords").onclick = () => copyText(`/tp ${plot.x} ~ ${plot.z}`);
+      $("#mOpenMap").onclick = () => {
+        // You can deep-link into dynmap later if you want
+        window.open(CONFIG.mapUrl, "_blank", "noopener");
+      };
+
+      const buyBtn = $("#mBuy");
+      if(plot.status !== "available"){
+        buyBtn.classList.remove("primary");
+        buyBtn.disabled = true;
+        buyBtn.style.opacity = ".55";
+        buyBtn.style.cursor = "not-allowed";
+        buyBtn.textContent = plot.status === "owned" ? "Owned" : "On Hold";
+      }else{
+        buyBtn.disabled = false;
+        buyBtn.style.opacity = "1";
+        buyBtn.style.cursor = "pointer";
+        buyBtn.innerHTML = `
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M6 6h15l-1.5 9h-12L6 6Z"/><path d="M6 6l-2-3H1"/><path d="M8 21a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"/><path d="M18 21a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"/>
+          </svg>
+          Purchase
+        `;
+        buyBtn.onclick = () => {
+          // Later: /checkout?plot=A-01
+          window.open(CONFIG.purchaseUrl, "_blank", "noopener");
+          showToast("Checkout opened (placeholder).");
+        };
+      }
+
+      $("#modalBack").classList.add("show");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeModal(){
+      $("#modalBack").classList.remove("show");
+      document.body.style.overflow = "";
+    }
+
+    function normalize(s){ return (s||"").toLowerCase().trim(); }
+
+    function scoreRecommended(p){
+      // simple heuristic: available first, then central-ish tag, then price
+      let s = 0;
+      if(p.status==="available") s += 100;
+      if((p.tags||[]).includes("central")) s += 20;
+      if((p.tags||[]).includes("market")) s += 12;
+      if((p.tags||[]).includes("remote")) s -= 6;
+      s += Math.max(0, 40 - p.price); // cheaper slightly higher
+      return s;
+    }
+
+    function applyFilters(){
+      const q = normalize($("#q").value);
+      const status = $("#status").value;
+      const sort = $("#sort").value;
+
+      let rows = PLOTS.slice();
+
+      if(status !== "all"){
+        rows = rows.filter(p => p.status === status);
+      }
+
+      if(q){
+        rows = rows.filter(p => {
+          const hay = normalize([
+            p.id, p.name, p.region, p.owner, (p.tags||[]).join(" "), p.notes
+          ].join(" "));
+          return hay.includes(q);
+        });
+      }
+
+      // sort
+      if(sort === "price_asc") rows.sort((a,b)=>a.price-b.price);
+      else if(sort === "price_desc") rows.sort((a,b)=>b.price-a.price);
+      else if(sort === "name_asc") rows.sort((a,b)=>a.name.localeCompare(b.name));
+      else if(sort === "newest") rows.sort((a,b)=> (b._t||0) - (a._t||0));
+      else rows.sort((a,b)=> scoreRecommended(b) - scoreRecommended(a));
+
+      render(rows);
+    }
+
+    function render(rows){
+      const list = $("#list");
+      list.innerHTML = "";
+
+      const total = PLOTS.length;
+      const avail = PLOTS.filter(p=>p.status==="available").length;
+      const owned = PLOTS.filter(p=>p.status==="owned").length;
+
+      $("#count").textContent = `${rows.length} of ${total} plots`;
+      $("#kAvail").textContent = avail;
+      $("#kOwned").textContent = owned;
+
+      for(const p of rows){
+        const tags = (p.tags||[]).slice(0,3).map(t => `<span class="tag">${t}</span>`).join("");
+        const owner = p.owner ? p.owner : "—";
+        const coord = `x ${p.x}, z ${p.z}`;
+
+        const el = document.createElement("div");
+        el.className = "row";
+        el.setAttribute("role","listitem");
+        el.innerHTML = `
+          <div class="left">
+            <div class="titleLine">
+              <div class="plotName">${p.name} <span style="color:var(--muted2); font-weight:650;">• ${p.id}</span></div>
+              ${statusTag(p.status)}
+            </div>
+            <div class="meta">
+              <span><strong style="color:var(--text); font-weight:700;">Region:</strong> ${p.region}</span>
+              <span>•</span>
+              <span><strong style="color:var(--text); font-weight:700;">Owner:</strong> ${owner}</span>
+              <span>•</span>
+              <span><strong style="color:var(--text); font-weight:700;">Coords:</strong> ${coord}</span>
+            </div>
+            <div class="meta" style="margin-top:6px;">
+              ${tags}
+              ${p.notes ? `<span class="tag" title="Notes">${p.notes}</span>` : ""}
+            </div>
+          </div>
+          <div class="right">
+            <div class="price">${money(p.price)}</div>
+            <div class="smallNote">Protection only</div>
+            <button class="btn ${p.status==='available'?'primary':''}" type="button" style="justify-content:center;">
+              Details
+            </button>
+          </div>
+        `;
+
+        const detailsBtn = el.querySelector("button");
+        detailsBtn.addEventListener("click", () => openModal(p));
+
+        list.appendChild(el);
+      }
+    }
+
+    // ====== Init ======
+    // map embed
+    $("#mapFrame").src = CONFIG.mapEmbedUrl || "about:blank";
+
+    // nav: mobile drawer
+    const hamburger = $("#hamburger");
+    const drawer = $("#mobileDrawer");
+    hamburger.addEventListener("click", () => {
+      const open = drawer.classList.toggle("open");
+      hamburger.setAttribute("aria-expanded", String(open));
+    });
+
+    // actions
+    $("#btnOpenMap").addEventListener("click", () => window.open(CONFIG.mapUrl, "_blank", "noopener"));
+    $("#btnCopyMap").addEventListener("click", () => copyText(CONFIG.mapUrl));
+    $("#btnCopyIp").addEventListener("click", () => copyText(CONFIG.serverIp));
+
+    $("#btnAvailable").addEventListener("click", () => {
+      $("#status").value = "available";
+      applyFilters();
+      showToast("Showing available plots.");
+    });
+
+    $("#btnBuyAny").addEventListener("click", () => {
+      $("#status").value = "available";
+      applyFilters();
+      document.getElementById("q").focus();
+    });
+
+    $("#btnReset").addEventListener("click", () => {
+      $("#q").value = "";
+      $("#status").value = "all";
+      $("#sort").value = "recommended";
+      applyFilters();
+      showToast("Filters reset.");
+    });
+
+    $("#q").addEventListener("input", applyFilters);
+    $("#status").addEventListener("change", applyFilters);
+    $("#sort").addEventListener("change", applyFilters);
+
+    // modal close
+    $("#mClose").addEventListener("click", closeModal);
+    $("#modalBack").addEventListener("click", (e) => {
+      if(e.target === $("#modalBack")) closeModal();
+    });
+    window.addEventListener("keydown", (e) => {
+      if(e.key === "Escape") closeModal();
+    });
+
+    // reveal
+    const reveal = new IntersectionObserver((entries) => {
+      for(const e of entries){
+        if(e.isIntersecting){
+          e.target.classList.add("on");
+          reveal.unobserve(e.target);
+        }
+      }
+    }, {threshold: 0.14});
+    $$(".reveal").forEach(el => reveal.observe(el));
+
+    // initial render
+    applyFilters();
+  </script>
+</body>
+</html>
