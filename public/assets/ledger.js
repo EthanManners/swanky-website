@@ -27,6 +27,11 @@
     return ["Owned", "Protected by owner + invites"];
   }
 
+  function areaLabel(area){
+    if(typeof area !== "number") return "Area: — m²";
+    return `Area: ${area} m²`;
+  }
+
   function openModal(plot){
     state.selectedPlot = plot;
     $("#mTitle").textContent = `Plot ${plot.plot_id}`;
@@ -36,6 +41,7 @@
     $("#mPrice").textContent = money(plot.price_cents);
     $("#mPlotId").textContent = plot.plot_id;
     $("#mDistrict").textContent = plot.district || "—";
+    $("#mArea").textContent = areaLabel(plot.area_m2);
     $("#mOwner").textContent = plot.owner_name || "—";
     $("#mOwnerNote").textContent = plot.owner_name ? "Public ownership record" : "Unowned";
 
@@ -138,6 +144,8 @@
           </div>
           <div class="meta">
             <span><span class="meta-label">District:</span> ${p.district || "—"}</span>
+            <span>•</span>
+            <span>${areaLabel(p.area_m2)}</span>
             <span>•</span>
             <span><span class="meta-label">Owner:</span> ${owner}</span>
           </div>

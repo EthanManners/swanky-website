@@ -12,11 +12,13 @@ async function main(){
       where: { plot_id: plot.plot_id },
       update: {
         price_cents: plot.price_cents,
+        area_m2: plot.area_m2,
         district: plot.district || null
       },
       create: {
         plot_id: plot.plot_id,
         price_cents: plot.price_cents,
+        area_m2: plot.area_m2,
         district: plot.district || null,
         status: "available"
       }
