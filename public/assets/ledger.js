@@ -2,9 +2,9 @@
   const { $, $$, showToast, copyText, setupReveal, setupMobileDrawer } = window.App;
 
   const CONFIG = {
-    serverIp: "play.example.com",
-    mapUrl: "https://example.com/dynmap/",
-    mapEmbedUrl: "https://example.com/dynmap/"
+    serverIp: "mc.swanky.wtf",
+    mapUrl: "http://mc.swanky.wtf:8634/",
+    mapEmbedUrl: "http://mc.swanky.wtf:8634/"
   };
 
   const state = {
