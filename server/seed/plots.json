@@ -1,0 +1,27 @@
+[
+  {
+    "plot_id": "plot_0001",
+    "price_cents": 2500,
+    "district": "South Canal"
+  },
+  {
+    "plot_id": "plot_0002",
+    "price_cents": 3000,
+    "district": "South Canal"
+  },
+  {
+    "plot_id": "plot_0101",
+    "price_cents": 4000,
+    "district": "East Ridge"
+  },
+  {
+    "plot_id": "plot_0123",
+    "price_cents": 1800,
+    "district": "North Spur"
+  },
+  {
+    "plot_id": "plot_0207",
+    "price_cents": 2200,
+    "district": "Hollow"
+  }
+]
