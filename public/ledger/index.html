@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="color-scheme" content="dark light" />
+  <title>World Ledger — Year Zero SMP</title>
+  <meta name="description" content="World map, plot registry, and ownership status for a persistent SMP." />
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+
+<body>
+  <div class="noise" aria-hidden="true"></div>
+
+  <div class="nav-wrap">
+    <div class="container">
+      <nav class="nav" aria-label="Primary">
+        <a class="brand" href="/" title="Home">
+          <div class="brand-badge" aria-hidden="true"></div>
+          <div class="brand-text">
+            <div class="brand-title">Year Zero SMP</div>
+            <div class="brand-sub">World Ledger</div>
+          </div>
+        </a>
+
+        <div class="nav-links" aria-label="Site">
+          <a href="/">Home</a>
+          <a href="/ledger" class="active">World Ledger</a>
+          <a href="/#join">Join</a>
+          <a href="/#rules">Rules &amp; Mods</a>
+          <a href="/#commands">Commands</a>
+          <a href="/#wiki">Wiki</a>
+          <a href="/#about">About</a>
+          <a href="/#terms">Terms</a>
+        </div>
+
+        <div class="nav-cta">
+          <button class="btn primary" id="btnBuyAny" type="button" title="View available plots">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M12 5v14M5 12h14"/>
+            </svg>
+            View Available
+          </button>
+
+          <button class="hamburger" id="hamburger" type="button" aria-label="Open menu" aria-expanded="false">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+          </button>
+        </div>
+      </nav>
+
+      <div class="mobile-drawer" id="mobileDrawer" aria-label="Mobile menu">
+        <div class="container">
+          <div class="inner">
+            <a href="/">Home <span>Overview</span></a>
+            <a href="/ledger">World Ledger <span>Map + Plots</span></a>
+            <a href="/#join">Join <span>IP + Version</span></a>
+            <a href="/#rules">Rules &amp; Mods <span>Allowed clients</span></a>
+            <a href="/#commands">Commands <span>Quality-of-life</span></a>
+            <a href="/#wiki">Wiki <span>Systems docs</span></a>
+            <a href="/#about">About <span>Vision</span></a>
+            <a href="/#terms">Terms <span>Store policies</span></a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <header class="ledger-header">
+    <div class="container">
+      <div class="header-card reveal">
+        <div class="kicker">
+          <span class="pill" aria-hidden="true"></span>
+          World Ledger • Land Registry
+        </div>
+
+        <h1>Plot ownership with clear, public status.</h1>
+
+        <p class="lead">
+          Browse available plots, see ownership status, and purchase protection for a specific parcel.
+          Ownership updates after payment and is visible to everyone.
+        </p>
+
+        <div class="head-actions">
+          <button class="btn" id="btnOpenMap" type="button">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M12 2 2 7l10 5 10-5-10-5Z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+            </svg>
+            Open Map
+          </button>
+          <button class="btn" id="btnCopyMap" type="button">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M9 9h10v10H9z"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+            Copy Map Link
+          </button>
+          <button class="btn" id="btnCopyIp" type="button">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M9 9h10v10H9z"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+            Copy IP
+          </button>
+        </div>
+
+        <div class="callout" id="successBanner" hidden>
+          <div class="mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M20 6 9 17l-5-5"/>
+            </svg>
+          </div>
+          <div class="text">
+            <strong>Purchase received!</strong><br/>
+            Your plot will appear in-game shortly after verification.
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <div class="ledger-grid">
+
+        <div>
+          <section class="card reveal" aria-label="World map">
+            <h2>World Map</h2>
+            <p class="sub">Reference the live map, then choose a plot from the registry below.</p>
+
+            <div class="mapWrap">
+              <iframe id="mapFrame" title="World map"></iframe>
+              <div class="mapOverlay">
+                <div class="chip"><span class="dot good"></span> Available</div>
+                <div class="chip"><span class="dot bad"></span> Owned</div>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="controls" aria-label="Ledger filters">
+              <input class="grow" id="q" type="search" placeholder="Search plots (plot ID, district, owner)..." autocomplete="off" />
+              <select class="small" id="status">
+                <option value="all">All status</option>
+                <option value="available">Available</option>
+                <option value="owned">Owned</option>
+              </select>
+              <select class="small" id="sort">
+                <option value="recommended">Sort: Recommended</option>
+                <option value="price_asc">Price: Low → High</option>
+                <option value="price_desc">Price: High → Low</option>
+                <option value="name_asc">Plot ID: A → Z</option>
+              </select>
+              <button class="btn" id="btnReset" type="button" title="Reset filters">
+                Reset
+              </button>
+            </div>
+
+            <div class="hint">
+              Protection only. No combat buffs or resource boosts. Ownership is public.
+            </div>
+          </section>
+
+          <section class="card reveal" aria-label="Plot registry">
+            <div class="listTop">
+              <div>
+                <h2>Plot Registry</h2>
+                <p class="sub">Fixed parcels only — no claim spam. Ownership is public and persistent.</p>
+              </div>
+              <div class="count" id="count">0 plots</div>
+            </div>
+
+            <div class="list" id="list" role="list"></div>
+
+            <div class="divider"></div>
+            <div class="hint">
+              Payments lock the plot and enqueue an in-game fulfillment update.
+            </div>
+          </section>
+
+        </div>
+
+        <aside class="sideBox">
+
+          <section class="card reveal" aria-label="Ledger summary">
+            <h2>Ledger Summary</h2>
+            <p class="sub">High-level status. Keep it factual.</p>
+
+            <div class="kv">
+              <div class="item">
+                <div class="k">World</div>
+                <div class="v" id="worldName">Main Survival</div>
+                <div class="s">Single persistent map</div>
+              </div>
+              <div class="item">
+                <div class="k">Wipes</div>
+                <div class="v">None</div>
+                <div class="s">No scheduled resets</div>
+              </div>
+              <div class="item">
+                <div class="k">Available</div>
+                <div class="v" id="kAvail">—</div>
+                <div class="s">Ready to purchase</div>
+              </div>
+              <div class="item">
+                <div class="k">Owned</div>
+                <div class="v" id="kOwned">—</div>
+                <div class="s">Protected land</div>
+              </div>
+            </div>
+
+            <div class="progress" aria-hidden="true">
+              <span id="soldProgress"></span>
+            </div>
+            <div class="progress-meta">
+              <span id="soldLabel">0% sold</span>
+              <span id="plotCount">0 plots</span>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="callout">
+              <div class="mark" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                  <path d="M12 22s8-4 8-10V6l-8-4-8 4v6c0 6 8 10 8 10Z"/>
+                </svg>
+              </div>
+              <div class="text">
+                <strong>Plots provide grief protection only.</strong><br/>
+                No combat buffs. No resource multipliers. Protection is the premium.
+              </div>
+            </div>
+          </section>
+
+          <section class="card reveal" aria-label="How buying works">
+            <h2>How it works</h2>
+            <p class="sub">Keep this short and serious.</p>
+
+            <div class="steps" role="list">
+              <div class="step" role="listitem">
+                <div class="num">1</div>
+                <p>Pick an available plot from the registry.</p>
+              </div>
+              <div class="step" role="listitem">
+                <div class="num">2</div>
+                <p>Checkout confirms payment and locks the plot.</p>
+              </div>
+              <div class="step" role="listitem">
+                <div class="num">3</div>
+                <p>Ownership updates in-game after fulfillment runs.</p>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <button class="btn primary block" id="btnAvailable" type="button">
+              Show Available Only
+            </button>
+            <div class="hint">
+              Refunds/chargebacks will be handled under Terms. Keep policy strict.
+            </div>
+          </section>
+
+          <section class="card reveal" aria-label="Support">
+            <h2>Support</h2>
+            <p class="sub">Keep it clean: where to ask, what not to ask.</p>
+            <div class="callout">
+              <div class="mark" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                  <path d="M12 18h.01"/><path d="M9.09 9a3 3 0 1 1 5.82 1c0 2-3 2-3 4"/><path d="M22 12A10 10 0 1 1 12 2a10 10 0 0 1 10 10Z"/>
+                </svg>
+              </div>
+              <div class="text">
+                For technical issues: Discord.<br/>
+                For “I got raided”: that’s gameplay.
+              </div>
+            </div>
+          </section>
+
+        </aside>
+
+      </div>
+    </div>
+  </main>
+
+  <div class="modalBack" id="modalBack" role="dialog" aria-modal="true" aria-label="Plot details">
+    <div class="modal">
+      <div class="modalHead">
+        <div class="t" id="mTitle">Plot</div>
+        <button class="x" id="mClose" type="button" aria-label="Close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M18 6 6 18M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modalBody">
+        <div class="modalGrid">
+          <div class="box">
+            <div class="k">Status</div>
+            <div class="v" id="mStatus">—</div>
+            <div class="s" id="mStatusNote">—</div>
+          </div>
+          <div class="box">
+            <div class="k">Price</div>
+            <div class="v" id="mPrice">—</div>
+            <div class="s">Protection only</div>
+          </div>
+          <div class="box">
+            <div class="k">Plot ID</div>
+            <div class="v" id="mPlotId">—</div>
+            <div class="s">WorldGuard region</div>
+          </div>
+          <div class="box">
+            <div class="k">District</div>
+            <div class="v" id="mDistrict">—</div>
+            <div class="s">Optional zone</div>
+          </div>
+          <div class="box">
+            <div class="k">Owner</div>
+            <div class="v" id="mOwner">—</div>
+            <div class="s" id="mOwnerNote">—</div>
+          </div>
+        </div>
+      </div>
+      <div class="modalActions">
+        <div class="field">
+          <label for="minecraftUsername">Minecraft username</label>
+          <input id="minecraftUsername" type="text" placeholder="e.g. Alex" autocomplete="off" />
+        </div>
+        <div class="field">
+          <label for="buyerEmail">Email (optional)</label>
+          <input id="buyerEmail" type="email" placeholder="you@example.com" autocomplete="off" />
+        </div>
+        <button class="btn primary" id="mBuy" type="button">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M6 6h15l-1.5 9h-12L6 6Z"/><path d="M6 6l-2-3H1"/><path d="M8 21a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"/><path d="M18 21a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"/>
+          </svg>
+          Purchase
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <span class="chip" aria-hidden="true"></span>
+    <span id="toastText">Copied.</span>
+  </div>
+
+  <script src="/assets/app.js"></script>
+  <script src="/assets/ledger.js"></script>
+</body>
+</html>

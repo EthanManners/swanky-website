@@ -1,0 +1,72 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum PlotStatus {
+  available
+  owned
+}
+
+enum OrderStatus {
+  pending
+  paid
+  fulfilled
+  failed
+  refunded
+}
+
+enum FulfillmentStatus {
+  pending
+  done
+  failed
+}
+
+model Plot {
+  plot_id     String     @id
+  price_cents Int
+  status      PlotStatus @default(available)
+  owner_uuid  String?
+  owner_name  String?
+  district    String?
+  created_at  DateTime   @default(now())
+  updated_at  DateTime   @updatedAt
+
+  orders       Order[]
+  fulfillments Fulfillment[]
+}
+
+model Order {
+  order_id          String      @id @default(cuid())
+  provider          String
+  provider_event_id String?     @unique
+  stripe_session_id String?     @unique
+  plot_id           String
+  buyer_uuid        String?
+  buyer_name        String
+  buyer_email       String?
+  amount_cents      Int
+  status            OrderStatus @default(pending)
+  created_at        DateTime    @default(now())
+  updated_at        DateTime    @updatedAt
+
+  plot Plot @relation(fields: [plot_id], references: [plot_id])
+}
+
+model Fulfillment {
+  id         String            @id @default(cuid())
+  plot_id    String
+  owner_uuid String?
+  owner_name String
+  status     FulfillmentStatus @default(pending)
+  attempts   Int               @default(0)
+  last_error String?
+  created_at DateTime          @default(now())
+  updated_at DateTime          @updatedAt
+
+  plot Plot @relation(fields: [plot_id], references: [plot_id])
+}

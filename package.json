@@ -1,0 +1,22 @@
+{
+  "name": "swanky-website",
+  "version": "0.1.0",
+  "private": true,
+  "main": "server/index.js",
+  "scripts": {
+    "dev": "node --watch server/index.js",
+    "start": "node server/index.js",
+    "seed": "node server/seed/seed.js",
+    "prisma:generate": "prisma generate --schema server/db/schema.prisma",
+    "prisma:migrate": "prisma migrate dev --schema server/db/schema.prisma"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.18.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "stripe": "^16.1.0"
+  },
+  "devDependencies": {
+    "prisma": "^5.18.0"
+  }
+}

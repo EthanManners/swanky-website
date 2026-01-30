@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="color-scheme" content="dark light" />
+  <title>Year Zero SMP — Persistent Survival</title>
+  <meta name="description" content="A persistent SMP with no wipes. Systems enforce consequences. Players shape outcomes." />
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+
+<body>
+  <div class="noise" aria-hidden="true"></div>
+
+  <div class="nav-wrap">
+    <div class="container">
+      <nav class="nav" aria-label="Primary">
+        <a class="brand" href="#top" data-scroll>
+          <div class="brand-badge" aria-hidden="true"></div>
+          <div class="brand-text">
+            <div class="brand-title">Year Zero SMP</div>
+            <div class="brand-sub">Persistent • Player-Driven</div>
+          </div>
+        </a>
+
+        <div class="nav-links" role="navigation" aria-label="Site">
+          <a href="#top" class="active" data-scroll>Home</a>
+          <a href="/ledger">World Ledger</a>
+          <a href="#join" data-scroll>Join</a>
+          <a href="#rules" data-scroll>Rules &amp; Mods</a>
+          <a href="#commands" data-scroll>Commands</a>
+          <a href="#wiki" data-scroll>Wiki</a>
+          <a href="#about" data-scroll>About</a>
+          <a href="#terms" data-scroll>Terms</a>
+        </div>
+
+        <div class="nav-cta">
+          <button class="btn primary" id="ctaJoin" type="button" title="Go to Join">
+            <span class="dot" aria-hidden="true"></span>
+            Join the World
+          </button>
+
+          <button class="hamburger" id="hamburger" type="button" aria-label="Open menu" aria-expanded="false">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+          </button>
+        </div>
+      </nav>
+
+      <div class="mobile-drawer" id="mobileDrawer" aria-label="Mobile menu">
+        <div class="container">
+          <div class="inner">
+            <a href="#top" data-scroll>Home <span>Overview</span></a>
+            <a href="/ledger">World Ledger <span>Map + Plots</span></a>
+            <a href="#join" data-scroll>Join <span>IP + Version</span></a>
+            <a href="#rules" data-scroll>Rules &amp; Mods <span>Allowed clients</span></a>
+            <a href="#commands" data-scroll>Commands <span>Quality-of-life</span></a>
+            <a href="#wiki" data-scroll>Wiki <span>Systems docs</span></a>
+            <a href="#about" data-scroll>About <span>Vision</span></a>
+            <a href="#terms" data-scroll>Terms <span>Store policies</span></a>
+
+            <div class="drawer-row">
+              <button class="btn primary" id="ctaLedger" type="button">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                  <path d="M3 7h18M6 3h12M5 21h14a2 2 0 0 0 2-2V9H3v10a2 2 0 0 0 2 2Z"/>
+                </svg>
+                View Ledger
+              </button>
+              <button class="btn" id="ctaCopyIp" type="button">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                  <path d="M9 9h10v10H9z"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                </svg>
+                Copy IP
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <header class="hero" id="top">
+    <div class="container">
+      <div class="hero-grid">
+        <div class="hero-card reveal">
+          <div class="kicker">
+            <span class="pill" aria-hidden="true"></span>
+            Persistent Survival • Year Zero
+          </div>
+
+          <h1>Build early. Hold position.</h1>
+
+          <p class="lead">
+            A long-running SMP with <strong>no wipes</strong> and <strong>no scheduled resets</strong>.
+            The world is early—most power structures haven’t formed yet.
+            Systems enforce consequences. Players shape outcomes.
+          </p>
+
+          <div class="hero-actions">
+            <button class="btn primary" id="btnJoin" type="button">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <path d="M12 5v14M5 12h14"/>
+              </svg>
+              Join
+            </button>
+            <button class="btn" id="btnLedger" type="button">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <path d="M3 7h18M6 3h12M5 21h14a2 2 0 0 0 2-2V9H3v10a2 2 0 0 0 2 2Z"/>
+              </svg>
+              World Ledger
+            </button>
+            <button class="btn" id="btnCopyIp" type="button">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <path d="M9 9h10v10H9z"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+              </svg>
+              Copy IP
+            </button>
+          </div>
+
+          <p class="mini">
+            <strong>Year Zero:</strong> most cities, supply chains, and long-term power centers don’t exist yet.
+            Joining early gives you positioning, not power. Protection is limited and visible.
+          </p>
+        </div>
+
+        <aside class="side">
+          <div class="panel reveal">
+            <h3>Server snapshot</h3>
+            <div class="grid2">
+              <div class="stat">
+                <div class="label">Ruleset</div>
+                <div class="value">Persistent survival</div>
+                <div class="hint">No scheduled wipes</div>
+              </div>
+              <div class="stat">
+                <div class="label">Economy</div>
+                <div class="value">Player-driven</div>
+                <div class="hint">No pay-to-win</div>
+              </div>
+              <div class="stat">
+                <div class="label">Latest Version</div>
+                <div class="value serverVersion">1.21.x</div>
+                <div class="hint"></div>
+              </div>
+              <div class="stat">
+                <div class="label">Current World Size</div>
+                <div class="value">4000x4000</div>
+                <div class="hint"></div>
+              </div>
+              <div class="stat">
+                <div class="label">Wipes</div>
+                <div class="value">0</div>
+                <div class="hint"></div>
+              </div>
+            </div>
+
+            <div class="badge-row" aria-label="Tags">
+              <span class="badge">Player-driven outcomes</span>
+              <span class="badge">Visible ownership</span>
+              <span class="badge">Consequences persist</span>
+            </div>
+          </div>
+
+          <div class="panel reveal">
+            <h3>What you’re committing to</h3>
+            <div class="callout">
+              <div class="mark" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                  <path d="M12 22s8-4 8-10V6l-8-4-8 4v6c0 6 8 10 8 10Z"/>
+                </svg>
+              </div>
+              <div class="text">
+                Not a “grind” server. Not a “reset” server.<br/>
+                <strong>A persistent world</strong> where logistics, coordination, and continuity matter more than raw hours played.
+              </div>
+            </div>
+
+            <div class="spacer"></div>
+
+            <button class="btn primary block" id="btnReadMore" type="button">
+              Read how it works
+            </button>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+
+      <section id="how" class="reveal">
+        <div class="section-card">
+          <div class="section-title">
+            <div>
+              <h2>A survival world that doesn’t reset</h2>
+              <p class="section-sub">
+                Anyone can join and play survival normally. There are no starter kits, no default protection, and no admin-managed outcomes.
+              </p>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="bullets">
+            <div class="bullet">
+              <div class="top"><div class="ico" aria-hidden="true"></div><h4>Open entry</h4></div>
+              <p>Join at any time. Play vanilla survival. Learn the world by interacting with it.</p>
+            </div>
+            <div class="bullet">
+              <div class="top"><div class="ico" aria-hidden="true"></div><h4>Consequences persist</h4></div>
+              <p>Losses, decisions, and alliances carry forward. History builds over months.</p>
+            </div>
+            <div class="bullet">
+              <div class="top"><div class="ico" aria-hidden="true"></div><h4>Systems over staff</h4></div>
+              <p>Balance and pressure come from mechanics and social response—not admin arbitration.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="power" class="reveal">
+        <div class="section-card">
+          <div class="section-title">
+            <div>
+              <h2>Short-term power. Long-term pressure.</h2>
+              <p class="section-sub">
+                Strong advantages exist, but they come with real downsides and lasting consequences. The meta punishes neglect.
+              </p>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="bullets">
+            <div class="bullet">
+              <div class="top"><div class="ico" aria-hidden="true"></div><h4>Situational advantage</h4></div>
+              <p>There is no universal “best” option. Context matters.</p>
+            </div>
+            <div class="bullet">
+              <div class="top"><div class="ico" aria-hidden="true"></div><h4>Tradeoffs baked in</h4></div>
+              <p>Upsides are paired with costs that affect movement, risk, and visibility.</p>
+            </div>
+            <div class="bullet">
+              <div class="top"><div class="ico" aria-hidden="true"></div><h4>Reputation is real</h4></div>
+              <p>Outcomes are visible. The server remembers patterns over time.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="ledger" class="reveal">
+        <div class="section-card">
+          <div class="section-title">
+            <div>
+              <h2>World Ledger</h2>
+              <p class="section-sub">
+                The map shows fixed, visible parcels and ownership status. Security is optional and finite—protection is the premium, not power.
+              </p>
+            </div>
+            <button class="btn" type="button" id="btnLedger2" title="Go to Ledger page">
+              Open Ledger
+            </button>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="bullets">
+            <div class="bullet">
+              <div class="top"><div class="ico" aria-hidden="true"></div><h4>Build anywhere</h4></div>
+              <p>Unprotected land follows normal survival risk. The world is open by default.</p>
+            </div>
+            <div class="bullet">
+              <div class="top"><div class="ico" aria-hidden="true"></div><h4>Protected plots</h4></div>
+              <p>Grief protection only. No combat buffs. No resource multipliers.</p>
+            </div>
+            <div class="bullet">
+              <div class="top"><div class="ico" aria-hidden="true"></div><h4>Visible scarcity</h4></div>
+              <p>Parcels are fixed, limited, and public. Location and proximity matter over time.</p>
+            </div>
+          </div>
+
+          <div class="spacer"></div>
+
+          <div class="callout">
+            <div class="mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <path d="M12 2 2 7l10 5 10-5-10-5Z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+              </svg>
+            </div>
+            <div class="text">
+              <strong>Year Zero:</strong> ownership clusters and cities haven’t fully formed yet. Early positions shape where the “safe zones” emerge.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="join" class="reveal">
+        <div class="section-card">
+          <div class="section-title">
+            <div>
+              <h2>Join</h2>
+              <p class="section-sub">
+                Connection info goes here. Keep it dead simple. Nothing else should distract from “join + play”.
+              </p>
+            </div>
+            <button class="btn primary" type="button" id="btnCopyIp2">Copy IP</button>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="bullets">
+            <div class="bullet">
+              <div class="top"><div class="ico" aria-hidden="true"></div><h4>Server IP</h4></div>
+              <p><strong id="serverIp">play.example.com</strong><br><span class="text-muted">Replace with your real domain</span></p>
+            </div>
+            <div class="bullet">
+              <div class="top"><div class="ico" aria-hidden="true"></div><h4>Version</h4></div>
+              <p><strong class="serverVersion">1.21.x</strong><br><span class="text-muted">Keep aligned with your Paper build</span></p>
+            </div>
+            <div class="bullet">
+              <div class="top"><div class="ico" aria-hidden="true"></div><h4>Discord</h4></div>
+              <p><strong>discord.gg/yourcode</strong><br><span class="text-muted">Optional, but recommended</span></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="rules" class="reveal">
+        <div class="section-card">
+          <div class="section-title">
+            <div>
+              <h2>Rules &amp; Allowed Mods</h2>
+              <p class="section-sub">
+                Keep this page strict and minimal later. For the homepage, we only signal: no cheating, no exploits, allowed client mods list.
+              </p>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="bullets">
+            <div class="bullet">
+              <div class="top"><div class="ico" aria-hidden="true"></div><h4>Allowed</h4></div>
+              <p>Performance, UI, and accessibility mods (list them on the full page).</p>
+            </div>
+            <div class="bullet">
+              <div class="top"><div class="ico" aria-hidden="true"></div><h4>Not allowed</h4></div>
+              <p>X-ray, combat automation, packet abuse, dupes, and anything that bypasses systems.</p>
+            </div>
+            <div class="bullet">
+              <div class="top"><div class="ico" aria-hidden="true"></div><h4>Enforcement</h4></div>
+              <p>Staff handles cheating/exploits. Social outcomes stay player-driven.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="commands" class="reveal">
+        <div class="section-card">
+          <div class="section-title">
+            <div>
+              <h2>Commands</h2>
+              <p class="section-sub">
+                This will become a full page later. For now: keep it simple and avoid “server feels modded”.
+              </p>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="bullets">
+            <div class="bullet">
+              <div class="top"><div class="ico" aria-hidden="true"></div><h4>Quality-of-life</h4></div>
+              <p>/spawn, /tpa, /home, /msg (placeholder — match your actual plugin set later).</p>
+            </div>
+            <div class="bullet">
+              <div class="top"><div class="ico" aria-hidden="true"></div><h4>Land tools</h4></div>
+              <p>Plot/region commands will live on the World Ledger page.</p>
+            </div>
+            <div class="bullet">
+              <div class="top"><div class="ico" aria-hidden="true"></div><h4>Keep it legible</h4></div>
+              <p>Don’t add commands that reduce risk. Add only what improves navigation and clarity.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="wiki" class="reveal">
+        <div class="section-card">
+          <div class="section-title">
+            <div>
+              <h2>Wiki</h2>
+              <p class="section-sub">
+                A place for actual documentation. Keep the homepage light — the wiki is where details go.
+              </p>
+            </div>
+            <button class="btn" type="button" id="btnWiki" title="Wiki page later">Open Wiki</button>
+          </div>
+          <div class="divider"></div>
+          <div class="callout">
+            <div class="mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20"/><path d="M4 4v15.5A2.5 2.5 0 0 0 6.5 22H20V4H6.5A2.5 2.5 0 0 0 4 6.5V4Z"/>
+              </svg>
+            </div>
+            <div class="text">
+              Use the wiki for: system explanations, land registry details, allowed mods list, and “how-to” guides. Keep the homepage clean.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="about" class="reveal">
+        <div class="section-card">
+          <div class="section-title">
+            <div>
+              <h2>About</h2>
+              <p class="section-sub">
+                A long-running SMP built around player-driven systems, not admin intervention. Maintenance, logistics, and reputation matter.
+              </p>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="bullets">
+            <div class="bullet">
+              <div class="top"><div class="ico" aria-hidden="true"></div><h4>Persistent</h4></div>
+              <p>No wipe cycles. No scheduled resets. The world keeps going.</p>
+            </div>
+            <div class="bullet">
+              <div class="top"><div class="ico" aria-hidden="true"></div><h4>Player-driven</h4></div>
+              <p>Systems create pressure. Players solve problems socially.</p>
+            </div>
+            <div class="bullet">
+              <div class="top"><div class="ico" aria-hidden="true"></div><h4>Legible meta</h4></div>
+              <p>Map visibility, ownership, and outcomes create a readable world state.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="terms" class="reveal">
+        <div class="section-card">
+          <div class="section-title">
+            <div>
+              <h2>Terms</h2>
+              <p class="section-sub">
+                Keep this as a real page later: plot purchases, refunds, chargebacks, and abuse policy.
+              </p>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="callout">
+            <div class="mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <path d="M8 7V3h8v4"/><path d="M6 7h12l-1 14H7L6 7Z"/><path d="M10 11v6M14 11v6"/>
+              </svg>
+            </div>
+            <div class="text">
+              Terms will cover: plot ownership rules, refund policy, and what happens in case of chargebacks or abuse.
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="brand-title footer-brand">Year Zero SMP</div>
+          <div class="small">
+            Persistent world. No scheduled resets. Systems enforce consequences. Players shape outcomes.
+          </div>
+        </div>
+        <div class="footer-links" aria-label="Footer">
+          <a href="#top" data-scroll>Home</a>
+          <a href="/ledger">World Ledger</a>
+          <a href="#join" data-scroll>Join</a>
+          <a href="#rules" data-scroll>Rules &amp; Mods</a>
+          <a href="#commands" data-scroll>Commands</a>
+          <a href="#wiki" data-scroll>Wiki</a>
+          <a href="#about" data-scroll>About</a>
+          <a href="#terms" data-scroll>Terms</a>
+        </div>
+      </div>
+      <div class="spacer"></div>
+      <div class="small">© <span id="year"></span> Year Zero SMP. All names and URLs are placeholders.</div>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <span class="chip" aria-hidden="true"></span>
+    <span id="toastText">Copied.</span>
+  </div>
+
+  <script src="/assets/app.js"></script>
+  <script src="/assets/home.js"></script>
+</body>
+</html>
