@@ -51,6 +51,15 @@ npm run prisma:generate
 npm run seed
 ```
 
+### 4a) Import plots from regions.yml
+
+If you want to derive plots directly from WorldGuard regions, update the naming rules in
+`server/seed/regions.config.json`, then run:
+
+```bash
+npm run import:regions
+```
+
 ### 5) Run the server
 
 ```bash
@@ -80,6 +89,10 @@ Edit `server/seed/plots.json` and re-run the seed script to add plots. Each entr
 - `plot_id` (e.g. `plot_0123`)
 - `price_cents`
 - `district` (optional)
+
+Alternatively, use `server/seed/regions.yml` with `npm run import:regions` to compute plot areas from
+WorldGuard regions. Adjust `server/seed/regions.config.json` to control district and pricing
+defaults, prefix-based rules, overrides, and excluded region IDs.
 
 ## API Overview
 

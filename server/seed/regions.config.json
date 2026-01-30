@@ -1,0 +1,9 @@
+{
+  "defaults": {
+    "price_cents": 0,
+    "district": null
+  },
+  "prefixes": {},
+  "overrides": {},
+  "exclude": ["__global__"]
+}

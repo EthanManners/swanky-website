@@ -29,6 +29,7 @@ enum FulfillmentStatus {
 model Plot {
   plot_id     String     @id
   price_cents Int
+  area        Int?
   status      PlotStatus @default(available)
   owner_uuid  String?
   owner_name  String?
