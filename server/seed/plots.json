@@ -2,26 +2,31 @@
   {
     "plot_id": "plot_0001",
     "price_cents": 2500,
+    "area_m2": 120,
     "district": "South Canal"
   },
   {
     "plot_id": "plot_0002",
     "price_cents": 3000,
+    "area_m2": 160,
     "district": "South Canal"
   },
   {
     "plot_id": "plot_0101",
     "price_cents": 4000,
+    "area_m2": 220,
     "district": "East Ridge"
   },
   {
     "plot_id": "plot_0123",
     "price_cents": 1800,
+    "area_m2": 90,
     "district": "North Spur"
   },
   {
     "plot_id": "plot_0207",
     "price_cents": 2200,
+    "area_m2": 110,
     "district": "Hollow"
   }
 ]

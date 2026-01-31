@@ -9,6 +9,7 @@ router.get("/", async (req, res) => {
       plot_id: true,
       status: true,
       price_cents: true,
+      area_m2: true,
       owner_name: true,
       district: true
     },
@@ -26,6 +27,7 @@ router.get("/:plotId", async (req, res) => {
       plot_id: true,
       status: true,
       price_cents: true,
+      area_m2: true,
       owner_name: true,
       owner_uuid: true,
       district: true
